@@ -1,0 +1,21 @@
+{
+  "name": "alverated/laravel-error-mailer",
+  "description": "Error Mailer for Laravel",
+  "keywords": ["framework", "laravel error mailer"],
+  "license": "MIT",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Alver G. Noquiao",
+      "email": "alverated013@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Alverated\\LaravelErrorMailer\\": "src/Alverated/LaravelErrorMailer"
+    }
+  }
+}
