@@ -30,7 +30,12 @@ A configuration and blade file will be publish to `config/laravel-error-mailer.p
 Update your settings in the generated configuration file.
 
 ##Usage
-Open `app/Exceptions/Handler.php` and add these two lines of codes to `public function report(Exception $e)` below `parent::report($e);`
+Open `app/Exceptions/Handler.php` and import `Alverated\LaravelErrorMailer\ErrorMailer`
+~~~php
+//...
+use Alverated\LaravelErrorMailer\ErrorMailer;
+~~~
+and add these two lines of codes to `public function report(Exception $e)` below `parent::report($e);`
 
 ~~~php
 public function report(Exception $e)
