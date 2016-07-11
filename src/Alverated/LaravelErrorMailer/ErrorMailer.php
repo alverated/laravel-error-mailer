@@ -2,10 +2,13 @@
 
 namespace Alverated\LaravelErrorMailer;
 
+use Illuminate\Support\Facades\Log;
+
 class ErrorMailer
 {
     protected $base_path;
     protected $e;
+    protected $confPath = 'laravel-error-mailer';
 
     public function __construct(\Exception $e)
     {
@@ -15,14 +18,15 @@ class ErrorMailer
 
     public function sendError()
     {
-        $config = config(env('APP_ENV') . '.settings');
+        $config = config($this->confPath);
         $output = '';
         $file = $this->e->getFile();
         $line = $this->e->getLine();
         $trace = $this->e->getTrace();
 
-        if (file_exists($file)) {
-            try {
+        try {
+
+            if (file_exists($file)) {
                 $f = file($file);
                 $line = (int)$line;
 
@@ -31,16 +35,12 @@ class ErrorMailer
                         $output .= ($i + 1) . ": " . $f[$i];
                     }
                 }
-            } catch (\Exception $e) {
+            } else {
+                if (is_array($trace) && !empty($trace)) {
+                    $elem = current($trace);
 
-            }
-        } else {
-            if (is_array($trace) && !empty($trace)) {
-                $elem = current($trace);
-
-                if (is_array($elem)) {
-                    if (isset($elem['file']) && isset($elem['line'])) {
-                        try {
+                    if (is_array($elem)) {
+                        if (isset($elem['file']) && isset($elem['line'])) {
                             $file = file($elem['file']);
                             $line = (int)$elem['line'];
 
@@ -49,12 +49,13 @@ class ErrorMailer
                                     $output .= ($i + 1) . ": " . $file[$i];
                                 }
                             }
-                        } catch (\Exception $e) {
-                            \Log::error('Email:Error:Reporting: ' . $e->getMessage());
                         }
                     }
                 }
             }
+
+        } catch (\Exception $e) {
+            Log::error('Email:Error:Reporting: ' . $e->getMessage());
         }
 
         try {
@@ -76,7 +77,7 @@ class ErrorMailer
             $request['error_line'] = $line;
             $request['error_file'] = $file;
             $request['class_name'] = get_class($this->e);
-            $request['reported_by'] = isset($config['site_name']) ? 'Team ' . $config['site_name'] : 'Error Handler';
+            $request['reported_by'] = isset($config['reported_by']) ? $config['reported_by'] : 'LaravelErrorMailer';
 
             $data = [
                 'tempData' => $request,
@@ -85,7 +86,7 @@ class ErrorMailer
             $this->exec($data);
 
         } catch (Exception $e) {
-            \Log::error('Email:Error:Reporting: ' . $e->getMessage());
+            Log::error('Email:Error:Reporting: ' . $e->getMessage());
         }
     }
 

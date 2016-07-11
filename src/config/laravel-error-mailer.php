@@ -13,5 +13,6 @@ return [
     'reply_to' => [
         'name'  => 'Support',
         'email' => 'support@domain.com',
-    ]
+    ],
+    'reported_by' => 'LaravelErrorMailer',
 ];
