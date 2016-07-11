@@ -4,11 +4,11 @@ return [
     'subject' => 'Site Error',
     'template' => 'vendor.mailer',
     'recipients' => [
-        'alver.noquiao@gmail.com',
+        'youremail@domain.com',
     ],
     'from' => [
         'name'  => 'Error Handler',
-        'email' => 'error@domain.com',
+        'email' => 'errormailer@domain.com',
     ],
     'reply_to' => [
         'name'  => 'Support',
