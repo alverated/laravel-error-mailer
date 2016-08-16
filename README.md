@@ -43,8 +43,10 @@ public function report(Exception $e)
     parent::report($e);
 
     // add this code
-    $err = new ErrorMailer($e);
-    $err->sendError();
+    if ($this->shouldReport($e)) {
+        $err = new ErrorMailer($e);
+        $err->sendError();
+    }
 }
 ~~~
 
