@@ -10,10 +10,11 @@ class ErrorMailer
     protected $e;
     protected $confPath = 'laravel-error-mailer';
 
-    public function __construct(\Exception $e)
+    public function __construct(\Exception $e, $exclude = array())
     {
         $this->e = $e;
         $this->base_path = base_path();
+        $this->exclude = $exclude;
     }
 
     public function sendError()
@@ -78,6 +79,10 @@ class ErrorMailer
             $request['error_file'] = $file;
             $request['class_name'] = get_class($this->e);
             $request['reported_by'] = isset($config['reported_by']) ? $config['reported_by'] : 'LaravelErrorMailer';
+
+            foreach ($exclude as $e) {
+                unset($request[$e[0]][$e[1]]);
+            }
 
             $data = [
                 'tempData' => $request,
