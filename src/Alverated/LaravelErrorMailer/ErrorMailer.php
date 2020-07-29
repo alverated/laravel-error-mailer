@@ -9,11 +9,13 @@ class ErrorMailer
     protected $base_path;
     protected $e;
     protected $confPath = 'laravel-error-mailer';
+    protected $exclude = [];
 
-    public function __construct(\Exception $e)
+    public function __construct(\Exception $e, $exclude = [])
     {
         $this->e = $e;
         $this->base_path = base_path();
+        $this->exclude = $exclude;
     }
 
     public function sendError()
@@ -78,6 +80,17 @@ class ErrorMailer
             $request['error_file'] = $file;
             $request['class_name'] = get_class($this->e);
             $request['reported_by'] = isset($config['reported_by']) ? $config['reported_by'] : 'LaravelErrorMailer';
+
+            // exclude data from request
+            foreach ($this->exclude as $reqKey => $keys) {
+                if(!empty($request[$reqKey]) && is_array($keys)) {
+                    foreach ($keys as $key) {
+                        if(!empty($request[$reqKey][$key])) {
+                            unset($request[$reqKey][$key]);
+                        }
+                    }
+                }
+            }
 
             $data = [
                 'tempData' => $request,
